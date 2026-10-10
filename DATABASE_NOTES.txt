@@ -1,0 +1,21 @@
+AIRLINE RESERVATION DATABASE NOTES
+
+Database used by the final application:
+- Database name: airline_reservation
+- The Flask application connects to the existing MySQL database.
+- Existing tables, sample data, constraints, views and triggers are reused.
+- The application does NOT drop, recreate or reset the database.
+
+Final application workflow:
+Flight Search & Booking
+→ Seat Allocation
+→ Payment
+→ Ticket Issue
+→ Check-In
+→ Baggage
+→ Cancellation & Refund
+→ Reports
+
+The application checks existing triggers before manually changing flight seat inventory so an existing trigger is not double-applied.
+
+Keep the local .env file private and never upload it to GitHub.

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airline Reservation Management System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">✈</div>
+            <div>
+                <strong>Airline DB</strong>
+                <span>Management System</span>
+            </div>
+        </div>
+
+        <nav class="nav">
+            <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">▦ <span>Dashboard</span></a>
+            <a href="/booking" class="nav-link {% if request.path == '/booking' %}active{% endif %}">🔎 <span>Flight Search & Booking</span></a>
+            <a href="/operations" class="nav-link {% if request.path == '/operations' %}active{% endif %}">⚙ <span>Operations Center</span></a>
+            <a href="/module/flights" class="nav-link {% if request.path == '/module/flights' %}active{% endif %}">✈ <span>Flights</span></a>
+            <a href="/module/passengers" class="nav-link {% if request.path == '/module/passengers' %}active{% endif %}">● <span>Passengers</span></a>
+            <a href="/module/reservations" class="nav-link {% if request.path == '/module/reservations' %}active{% endif %}">▣ <span>Reservations</span></a>
+            <a href="/module/seats" class="nav-link {% if request.path == '/module/seats' %}active{% endif %}">▤ <span>Seats</span></a>
+            <a href="/module/tickets" class="nav-link {% if request.path == '/module/tickets' %}active{% endif %}">▥ <span>Tickets</span></a>
+            <a href="/module/check-in" class="nav-link {% if request.path == '/module/check-in' %}active{% endif %}">✓ <span>Check-In</span></a>
+            <a href="/module/baggage" class="nav-link {% if request.path == '/module/baggage' %}active{% endif %}">▰ <span>Baggage</span></a>
+            <a href="/module/payments" class="nav-link {% if request.path == '/module/payments' %}active{% endif %}">₹ <span>Payments</span></a>
+            <a href="/module/cancellations" class="nav-link {% if request.path == '/module/cancellations' %}active{% endif %}">↩ <span>Cancellations</span></a>
+            <a href="/module/airports" class="nav-link {% if request.path == '/module/airports' %}active{% endif %}">⌖ <span>Airports</span></a>
+            <a href="/module/routes" class="nav-link {% if request.path == '/module/routes' %}active{% endif %}">⇄ <span>Routes</span></a>
+            <a href="/module/aircraft" class="nav-link {% if request.path == '/module/aircraft' %}active{% endif %}">✈ <span>Aircraft</span></a>
+            <a href="/module/fares" class="nav-link {% if request.path == '/module/fares' %}active{% endif %}">₹ <span>Fares</span></a>
+            <a href="/reports" class="nav-link {% if request.path == '/reports' %}active{% endif %}">▥ <span>Reports</span></a>
+        </nav>
+
+        <div class="sidebar-footer">Airline Reservation & Flight Operations<br>Final Review 2 + Review 3</div>
+    </aside>
+
+    <main class="main">
+        {% block content %}{% endblock %}
+    </main>
+</div>
+
+<div id="toast" class="toast"></div>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

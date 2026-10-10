@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<header class="topbar">
+    <div>
+        <div class="eyebrow">FINAL PROJECT</div>
+        <h1>Airline Reservation & Flight Operations</h1>
+        <p>Database Management System Dashboard</p>
+    </div>
+    <div id="connectionBadge" class="status-badge">● Checking MySQL...</div>
+</header>
+
+<section class="welcome card">
+    <h2>Welcome to the Management Dashboard</h2>
+    <p>Monitor flights, reservations, passengers, payments and cancellations from one place.</p>
+</section>
+
+<section class="stats-grid">
+    <div class="stat card"><span class="stat-icon">✈</span><div><label>Total Flights</label><strong id="statFlights">—</strong></div></div>
+    <div class="stat card"><span class="stat-icon">●</span><div><label>Total Passengers</label><strong id="statPassengers">—</strong></div></div>
+    <div class="stat card"><span class="stat-icon">▣</span><div><label>Total Reservations</label><strong id="statReservations">—</strong></div></div>
+    <div class="stat card"><span class="stat-icon">▤</span><div><label>Available Seats</label><strong id="statSeats">—</strong></div></div>
+    <div class="stat card"><span class="stat-icon">₹</span><div><label>Total Revenue</label><strong id="statRevenue">₹0.00</strong></div></div>
+    <div class="stat card"><span class="stat-icon">↩</span><div><label>Cancellations</label><strong id="statCancellations">—</strong></div></div>
+</section>
+
+<section class="two-column">
+    <div class="card">
+        <div class="section-heading"><div><h2>System Modules</h2><p>All modules are connected to your MySQL database.</p></div></div>
+        <div class="module-grid">
+            <a href="/booking">Flight Search & Booking</a>
+            <a href="/module/passengers">Passenger Management</a>
+            <a href="/operations">Reservation & Operations Center</a>
+            <a href="/operations">Seat Allocation</a>
+            <a href="/module/tickets">Ticket Management</a>
+            <a href="/module/check-in">Check-In</a>
+            <a href="/module/baggage">Baggage Entry</a>
+            <a href="/module/payments">Payment Management</a>
+            <a href="/module/cancellations">Cancellation & Refund</a>
+            <a href="/reports">Reports</a>
+        </div>
+    </div>
+
+    <div class="card connection-card">
+        <h2>Database Status</h2>
+        <p id="dbMessage">Checking connection...</p>
+        <button class="primary" onclick="testConnection()">Test Connection</button>
+    </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", loadDashboard);
+</script>
+{% endblock %}

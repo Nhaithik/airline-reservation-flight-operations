@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block content %}
+<header class="topbar">
+    <div>
+        <div class="eyebrow">REVIEW 3 WORKFLOW</div>
+        <h1>Flight Search & Booking</h1>
+        <p>Search live flights, select a passenger and reserve a seat.</p>
+    </div>
+    <div class="status-badge">● Live MySQL Data</div>
+</header>
+
+<section class="card workflow-card">
+    <div class="workflow-steps">
+        <div class="workflow-step active"><span>1</span><strong>Search Flight</strong></div>
+        <div class="workflow-line"></div>
+        <div class="workflow-step"><span>2</span><strong>Book Seat</strong></div>
+        <div class="workflow-line"></div>
+        <div class="workflow-step"><span>3</span><strong>Payment</strong></div>
+        <div class="workflow-line"></div>
+        <div class="workflow-step"><span>4</span><strong>Ticket</strong></div>
+    </div>
+</section>
+
+<section class="card search-card">
+    <div class="section-heading">
+        <div>
+            <h2>Search Available Flights</h2>
+            <p>Choose source, destination and optionally a departure date.</p>
+        </div>
+    </div>
+
+    <form id="flightSearchForm" class="form-grid">
+        <div>
+            <label>Source</label>
+            <select id="source" class="form-control">
+                <option value="">Any source</option>
+            </select>
+        </div>
+        <div>
+            <label>Destination</label>
+            <select id="destination" class="form-control">
+                <option value="">Any destination</option>
+            </select>
+        </div>
+        <div>
+            <label>Departure Date</label>
+            <input id="travelDate" type="date">
+            <small>Leave blank to search all available dates.</small>
+        </div>
+        <div class="form-submit">
+            <button class="primary" type="submit">Search Flights</button>
+            <button class="secondary" type="button" id="clearSearch">Clear</button>
+        </div>
+    </form>
+</section>
+
+<section class="card">
+    <div class="toolbar">
+        <div>
+            <h2>Available Flights</h2>
+            <p id="flightCount">Search results will appear here.</p>
+        </div>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Flight</th>
+                    <th>Airline</th>
+                    <th>Route</th>
+                    <th>Departure</th>
+                    <th>Arrival</th>
+                    <th>Available Seats</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="flightResults">
+                <tr><td colspan="7" class="empty-state">Use the search form to find flights.</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section id="bookingCard" class="card booking-card hidden">
+    <div class="section-heading">
+        <div>
+            <h2>Complete Booking</h2>
+            <p id="selectedFlightText">Selected flight</p>
+        </div>
+    </div>
+
+    <div class="selected-flight-summary" id="selectedFlightSummary"></div>
+
+    <form id="bookingForm" class="form-grid">
+        <input type="hidden" id="bookingFlightId">
+
+        <div>
+            <label>Passenger</label>
+            <select id="passengerId" class="form-control" required>
+                <option value="">Loading passengers...</option>
+            </select>
+        </div>
+
+        <div>
+            <label>Seat Number</label>
+            <input id="seatNumber" type="text" maxlength="4" placeholder="Example: 12A" required>
+            <small>Click a green seat below, or type it (row 1–30 + letter A–F).</small>
+        </div>
+
+        <div class="full-width">
+            <label>Choose a seat <span class="seat-legend"><i class="lg avail"></i>Available <i class="lg occ"></i>Taken <i class="lg sel"></i>Selected</span></label>
+            <div id="bookingSeatMap" class="seat-map"><span class="muted">Select a flight to load its seats.</span></div>
+        </div>
+
+        <div class="form-submit full-width">
+            <button class="primary" type="submit">Create Booking</button>
+            <button class="secondary" type="button" id="cancelBooking">Cancel</button>
+        </div>
+    </form>
+</section>
+
+<section id="successCard" class="card success-card hidden">
+    <h2>Booking Created Successfully</h2>
+    <div id="bookingResult"></div>
+    <p class="next-step-note">The reservation is currently <strong>Pending</strong>. Payment will confirm the reservation in the next workflow step.</p>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/booking.js') }}"></script>
+{% endblock %}

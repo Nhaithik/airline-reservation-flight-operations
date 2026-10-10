@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block content %}
+<header class="topbar compact">
+    <div>
+        <div class="eyebrow">REPORTING</div>
+        <h1>Management Reports</h1>
+        <p>SQL-based reports for the final project demonstration.</p>
+    </div>
+</header>
+
+<section class="report-grid">
+    <div class="card">
+        <h2>Route Demand</h2>
+        <p>Reservation count by source and destination.</p>
+        <div class="table-wrap"><table><thead><tr><th>Source</th><th>Destination</th><th>Total Reservations</th></tr></thead><tbody id="routeBody"></tbody></table></div>
+    </div>
+    <div class="card">
+        <h2>Revenue Summary</h2>
+        <div id="revenueBox" class="big-report">Loading...</div>
+    </div>
+</section>
+
+<section class="card">
+    <h2>Project Demonstration Checklist</h2>
+    <div class="checklist">
+        <div>✓ Flight search and live flight records</div>
+        <div>✓ Passenger and reservation management</div>
+        <div>✓ Seat, ticket, check-in and baggage modules</div>
+        <div>✓ Payments and cancellation/refund records</div>
+        <div>✓ Dashboard statistics from MySQL</div>
+        <div>✓ SQL reports: manifest, occupancy, route demand, baggage, cancellations, on-time status and revenue</div>
+        <div>✓ Clickable seat allocation and seat change</div>
+        <div>✓ Refund rules based on time before departure</div>
+        <div>✓ Error handling for database operations</div>
+    </div>
+</section>
+
+<section class="card report-extra">
+  <div class="section-heading"><h2>Flight Occupancy</h2><p>Booked active seats versus current flight inventory.</p></div>
+  <div class="table-wrap"><table><thead><tr><th>Flight</th><th>Route</th><th>Booked Seats</th><th>Available Seats</th></tr></thead><tbody id="occupancyBody"><tr><td colspan="4">Loading...</td></tr></tbody></table></div>
+</section>
+<section class="card report-extra">
+  <div class="section-heading"><h2>Passenger Manifest</h2><p>Reservation-level passenger and seat report.</p></div>
+  <div class="table-wrap"><table><thead><tr><th>Reservation</th><th>Flight</th><th>Passenger</th><th>Seat</th><th>Status</th></tr></thead><tbody id="manifestBody"><tr><td colspan="5">Loading...</td></tr></tbody></table></div>
+</section>
+<section class="card report-extra">
+  <div class="section-heading"><h2>Baggage Report</h2><p>Bags and weight per flight.</p></div>
+  <div class="table-wrap"><table><thead><tr><th>Flight</th><th>Route</th><th>Bags</th><th>Total kg</th><th>Average kg</th><th>Heaviest kg</th></tr></thead><tbody id="baggageBody"><tr><td colspan="6">Loading...</td></tr></tbody></table></div>
+</section>
+<section class="card report-extra">
+  <div class="section-heading"><h2>Cancellations &amp; Refunds</h2><p id="cancelSummary">Loading...</p></div>
+  <div class="table-wrap"><table><thead><tr><th>ID</th><th>Reservation</th><th>Passenger</th><th>Flight</th><th>Date</th><th>Reason</th><th>Refund</th></tr></thead><tbody id="cancelBody"><tr><td colspan="7">Loading...</td></tr></tbody></table></div>
+</section>
+<section class="card report-extra">
+  <div class="section-heading"><h2>On-Time Status</h2><p id="onTimeSummary">Loading...</p></div>
+  <div class="table-wrap"><table><thead><tr><th>Flight</th><th>Route</th><th>Scheduled</th><th>Actual</th><th>Delay (min)</th><th>Status</th></tr></thead><tbody id="onTimeBody"><tr><td colspan="6">Loading...</td></tr></tbody></table></div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+async function loadReports() {
+    try {
+        const routes = await api("/api/reports/route-demand");
+        const body = document.getElementById("routeBody");
+        body.innerHTML = routes.length
+            ? routes.map(r => `<tr><td>${escapeHtml(r.source)}</td><td>${escapeHtml(r.destination)}</td><td>${r.total_reservations}</td></tr>`).join("")
+            : '<tr><td colspan="3">No route data available.</td></tr>';
+
+        const revenue = await api("/api/reports/revenue");
+        document.getElementById("revenueBox").innerHTML = `
+            <div><span>Paid Transactions</span><strong>${revenue.total_paid_transactions ?? 0}</strong></div>
+            <div><span>Total Revenue</span><strong>₹${Number(revenue.total_revenue ?? 0).toFixed(2)}</strong></div>
+            <div><span>Average Revenue</span><strong>₹${Number(revenue.average_revenue ?? 0).toFixed(2)}</strong></div>`;
+
+        const occupancy = await api("/api/reports/occupancy");
+        document.getElementById("occupancyBody").innerHTML = occupancy.length
+            ? occupancy.map(r => `<tr><td>${escapeHtml(r.flight_number)}</td><td>${escapeHtml(r.source)} → ${escapeHtml(r.destination)}</td><td>${r.booked_seats}</td><td>${r.available_seats}</td></tr>`).join("")
+            : '<tr><td colspan="4">No occupancy data available.</td></tr>';
+
+        const manifest = await api("/api/reports/manifest");
+        document.getElementById("manifestBody").innerHTML = manifest.length
+            ? manifest.map(r => `<tr><td>#${r.reservation_id}</td><td>${escapeHtml(r.flight_number)}</td><td>${escapeHtml(r.passenger)}</td><td>${escapeHtml(r.seat_number)}</td><td>${escapeHtml(r.reservation_status)}</td></tr>`).join("")
+            : '<tr><td colspan="5">No manifest data available.</td></tr>';
+    } catch (e) {
+        showToast(e.message, true);
+    }
+    await loadExtraReports();
+}
+
+async function loadExtraReports() {
+    try {
+        const bag = await api("/api/reports/baggage");
+        document.getElementById("baggageBody").innerHTML = bag.length
+            ? bag.map(r => `<tr><td>${escapeHtml(r.flight_number)}</td><td>${escapeHtml(r.source)} → ${escapeHtml(r.destination)}</td><td>${r.total_bags}</td><td>${Number(r.total_weight).toFixed(1)}</td><td>${Number(r.average_weight).toFixed(1)}</td><td>${Number(r.heaviest_bag).toFixed(1)}</td></tr>`).join("")
+            : '<tr><td colspan="6">No baggage recorded yet.</td></tr>';
+    } catch (e) { showToast(e.message, true); }
+
+    try {
+        const c = await api("/api/reports/cancellations");
+        document.getElementById("cancelSummary").textContent =
+            `${c.summary.total_cancellations} cancellation(s) · ₹${Number(c.summary.total_refunded).toFixed(2)} refunded`;
+        document.getElementById("cancelBody").innerHTML = c.rows.length
+            ? c.rows.map(r => `<tr><td>#${r.cancellation_id}</td><td>#${r.reservation_id}</td><td>${escapeHtml(r.passenger)}</td><td>${escapeHtml(r.flight_number)}</td><td>${escapeHtml(r.cancellation_date)}</td><td>${escapeHtml(r.cancellation_reason)}</td><td>₹${Number(r.refund_amount ?? 0).toFixed(2)}</td></tr>`).join("")
+            : '<tr><td colspan="7">No cancellations.</td></tr>';
+    } catch (e) { showToast(e.message, true); }
+
+    try {
+        const o = await api("/api/reports/on-time");
+        const body = document.getElementById("onTimeBody");
+        const sum = document.getElementById("onTimeSummary");
+        if (o.mode === "unavailable") {
+            sum.textContent = o.hint;
+            body.innerHTML = '<tr><td colspan="6">No on-time data available.</td></tr>';
+        } else {
+            sum.textContent = Object.entries(o.summary).map(([k, v]) => `${k}: ${v}`).join(" · ");
+            body.innerHTML = o.rows.map(r => `<tr><td>${escapeHtml(r.flight_number)}</td><td>${escapeHtml(r.source)} → ${escapeHtml(r.destination)}</td><td>${escapeHtml(r.departure_time)}</td><td>${escapeHtml(r.actual_departure ?? "—")}</td><td>${r.delay_minutes ?? "—"}</td><td>${escapeHtml(r.on_time_status)}</td></tr>`).join("");
+        }
+    } catch (e) { showToast(e.message, true); }
+}
+document.addEventListener("DOMContentLoaded", loadReports);
+</script>
+{% endblock %}

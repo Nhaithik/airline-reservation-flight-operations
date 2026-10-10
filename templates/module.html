@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<header class="topbar compact">
+    <div>
+        <div class="eyebrow">DATABASE MODULE</div>
+        <h1>{{ module|replace('-', ' ')|title }}</h1>
+        <p>Live records from the <strong>{{ table }}</strong> table.</p>
+    </div>
+    <div id="connectionBadge" class="status-badge">● MySQL</div>
+</header>
+
+<section class="card">
+    <div class="toolbar">
+        <div>
+            <h2>{{ module|replace('-', ' ')|title }} Records</h2>
+            <p id="recordCount">Loading records...</p>
+        </div>
+        <div class="toolbar-actions">
+            <input id="searchInput" type="search" placeholder="Search records..." oninput="debouncedLoadModule()">
+            <button class="secondary" onclick="loadModule()">Refresh</button>
+            <button id="addRecordBtn" class="primary" onclick="openAddModal()">+ Add Record</button>
+        </div>
+    </div>
+
+    <div class="table-wrap">
+        <table id="dataTable">
+            <thead><tr id="tableHead"></tr></thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+    </div>
+</section>
+
+<div id="modal" class="modal hidden">
+    <div class="modal-box">
+        <div class="modal-header">
+            <div><h2 id="modalTitle">Add Record</h2><p>Enter values for the database record.</p></div>
+            <button class="close" onclick="closeModal()">×</button>
+        </div>
+        <form id="recordForm" onsubmit="saveRecord(event)">
+            <div id="formFields" class="form-grid"></div>
+            <div class="modal-actions">
+                <button type="button" class="secondary" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="primary">Save Record</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+const MODULE = {{ module|tojson }};
+const TABLE = {{ table|tojson }};
+</script>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/module.js') }}"></script>
+<script>document.addEventListener("DOMContentLoaded", loadModule);</script>
+{% endblock %}

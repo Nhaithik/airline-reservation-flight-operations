@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block content %}
+<header class="topbar">
+  <div>
+    <div class="eyebrow">FINAL PROJECT WORKFLOW</div>
+    <h1>Operations Center</h1>
+    <p>Complete the end-to-end passenger journey using the existing MySQL database.</p>
+  </div>
+  <div class="status-badge connected">● MySQL Workflow</div>
+</header>
+
+<section class="card workflow-banner">
+  <div class="workflow-steps">
+    <div class="workflow-step active"><span>1</span><strong>Booking</strong></div><div class="workflow-line"></div>
+    <div class="workflow-step"><span>2</span><strong>Seat</strong></div><div class="workflow-line"></div>
+    <div class="workflow-step"><span>3</span><strong>Payment</strong></div><div class="workflow-line"></div>
+    <div class="workflow-step"><span>4</span><strong>Ticket</strong></div><div class="workflow-line"></div>
+    <div class="workflow-step"><span>5</span><strong>Check-In</strong></div><div class="workflow-line"></div>
+    <div class="workflow-step"><span>6</span><strong>Baggage</strong></div>
+  </div>
+</section>
+
+<section class="ops-grid">
+  <div class="card">
+    <div class="section-heading"><h2>1. Select Reservation</h2><p>Only active Pending/Confirmed reservations are shown.</p></div>
+    <select id="reservationId" class="form-control"><option value="">Loading reservations...</option></select>
+    <div id="reservationSummary" class="summary-box">Select a reservation to continue.</div>
+  </div>
+
+  <div class="card">
+    <div class="section-heading"><h2>2. Seat Allocation</h2><p>Green = available, red = occupied. Click a green seat to move the selected reservation to it.</p></div>
+    <div id="seatInfo" class="muted-box">Select a reservation to load its flight seats.</div>
+    <div id="seatMap" class="seat-map"></div>
+  </div>
+</section>
+
+<section class="ops-grid">
+  <div class="card">
+    <div class="section-heading"><h2>3. Payment</h2><p>Payment confirms the reservation.</p></div>
+    <form id="paymentForm" class="form-grid">
+      <div><label>Amount (₹)</label><input id="paymentAmount" type="number" min="1" step="0.01" placeholder="Example: 5500" required></div>
+      <div><label>Payment Method</label><select id="paymentMethod" class="form-control">
+        <option value="UPI">UPI</option><option value="Credit Card">Credit Card</option><option value="Debit Card">Debit Card</option><option value="Cash">Cash</option>
+      </select></div>
+      <div class="full-width"><label>Transaction Reference</label><input id="paymentReference" placeholder="Example: TXN1001" required></div>
+      <div class="form-submit full-width"><button class="primary">Record Payment & Confirm</button></div>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="section-heading"><h2>4. Ticket Issue</h2><p>Issue a ticket only after successful payment.</p></div>
+    <button id="ticketBtn" class="primary">Issue Ticket</button>
+    <div id="ticketResult" class="result-box">Waiting for payment.</div>
+  </div>
+</section>
+
+<section class="ops-grid">
+  <div class="card">
+    <div class="section-heading"><h2>5. Check-In</h2><p>Ticket must be issued first.</p></div>
+    <form id="checkinForm" class="inline-form">
+      <input id="gateNumber" placeholder="Gate e.g. A2" maxlength="4" required>
+      <button class="primary">Check In</button>
+    </form>
+    <div id="checkinResult" class="result-box">Waiting for ticket.</div>
+  </div>
+
+  <div class="card">
+    <div class="section-heading"><h2>6. Baggage Entry</h2><p>Check-in must be completed first.</p></div>
+    <form id="baggageForm" class="inline-form">
+      <input id="baggageWeight" type="number" min="0.1" max="100" step="0.1" placeholder="Weight in kg" required>
+      <button class="primary">Add Baggage</button>
+    </form>
+    <div id="baggageResult" class="result-box">Waiting for check-in.</div>
+  </div>
+</section>
+
+<section class="card cancel-card">
+  <div class="section-heading"><h2>Cancellation & Refund</h2><p>Cancels the selected reservation, records the refund per policy (90% if 72h+ before departure, 50% if 24–72h, 25% under 24h, 0% after departure) and releases one flight seat.</p></div>
+  <div id="refundPreview" class="muted-box"></div>
+  <form id="cancelForm" class="inline-form">
+    <input id="cancelReason" placeholder="Cancellation reason" required>
+    <button class="danger-btn">Cancel Reservation & Refund</button>
+  </form>
+  <div id="cancelResult" class="result-box">No cancellation performed.</div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/operations.js') }}"></script>
+{% endblock %}
