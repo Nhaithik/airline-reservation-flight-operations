@@ -212,6 +212,7 @@ differ. Do not upload database passwords, API keys, or other secrets.
 
 
 16. How to Run Locally
+ 
 1. Install Python and MySQL.
 2. Open the project folder in Visual Studio Code.
 3. Create and activate a Python virtual environment.
