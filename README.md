@@ -1,6 +1,5 @@
 # Airline Reservation & Flight Operations Management System
 
-**Final Review 2 + Review 3 — Flask and MySQL Project**
 
 ## 1. Project Overview
 
